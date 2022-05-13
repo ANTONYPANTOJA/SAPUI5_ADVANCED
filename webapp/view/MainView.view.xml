@@ -1,0 +1,70 @@
+<mvc:View xmlns:layout="sap.ui.layout"
+    controllerName="logaligroup.employees.controller.MainView"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+>
+    <Shell id="shell">
+        <App id="app">
+            <pages>
+                <Page id="page" title="{i18n>title}">
+                <content>
+              <HBox id="Hbox_01">
+                    <Label id="Label_01" labelFor="Input_01"  text="{i18n>labelEmployee}" class="sapUiSmallMargin" />
+                    <Input id="Input_01" maxLength="6" width="200px" class="sapUiSmallMarginEnd"
+                            value="{/EmployeeId}" />
+                
+                   <Label id="labelCountry" labelFor="slCountry" text="{i18n>labelCountry}" class="sapUiSmallMargin" />
+                   <Select id="slCountry" forceSelection="false"  items="{/ListCountry}"
+                            selectedKey="{/CountryKey}">
+                        <items>
+                            <core:Item id="_IDGenItem1" key="{Key}" text="{Text}"/>
+                        </items>
+                   </Select> 
+                   <Button id="btnFilter" text="{i18n>btnFilter}" icon="sap-icon://search" press="onFilter" class="sapUiSmallMarginEnd"/>
+                   <Button id="btnClearFilter" text="{i18n>btnClearFilter}" icon="sap-icon://clear-filter" press="onClearFilter" class="sapUiSmallMarginEnd"/>
+                  </HBox>  
+                      <HBox id="Hbox_02">
+                        <Panel id="_IDGenPanel1">
+                                <Table id="_IDGenTable1" items="{/Employees}" >
+                                    <columns>
+                                        <Column id="_IDGenColumn1">
+                                            <header>
+                                                <Label id="_IDGenLabel2" text="{i18n>tableId}" />
+                                            </header>
+                                        </Column>
+                                           <Column id="_IDGenColumn2">
+                                            <header>
+                                                <Label id="_IDGenLabel22" text="{i18n>tableName}" />
+                                            </header>
+                                        </Column>
+                                           <Column id="_IDGenColumn3">
+                                            <header>
+                                                <Label id="_IDGenLabel3" text="{i18n>tableCountry}" />
+                                            </header>
+                                        </Column>
+                                           <Column id="_IDGenColumn4">
+                                            <header>
+                                                <Label id="_IDGenLabel4" text="{i18n>tableCity}" />
+                                            </header>
+                                        </Column>
+                                    </columns>
+                                    <ColumnListItem id="_IDGenColumnListItem1" type="Navigation" 
+                                                    press="showPostalCode">
+                                            <cells>
+                                                <Label id="_IDGenLabel5" text="{EmployeeID}" />
+                                                <Label id="_IDGenLabel6" text="{LastName},{FirstName}" />
+                                                <Label id="_IDGenLabel7" text="{Country}" />
+                                                <Label id="_IDGenLabel8" text="{City}" />
+                                            </cells>
+                                    </ColumnListItem>
+                                </Table>
+                        </Panel>
+                    </HBox>  
+                    </content>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
