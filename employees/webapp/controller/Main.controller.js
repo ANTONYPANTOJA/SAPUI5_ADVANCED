@@ -8,8 +8,13 @@ sap.ui.define([
 
     return Controller.extend("logaligroup.sapui5.controller.app", {
 
-        onInit: function () {
+        onbeforeRendering: function(){
 
+           // this._detailEmployeeView = this.getView().byId("detailEmployeeView");
+        },
+
+        onInit: function () {
+            this._detailEmployeeView = this.getView().byId("detailEmployeeView");
             var oview        = this.getView();
             //         var i18nBundle   = oview.getModel("i18n").getResourceBundle(); 
            
@@ -40,18 +45,52 @@ sap.ui.define([
                        //Add
                        this._bus = sap.ui.getCore().getEventBus();
                        this._bus.subscribe("flexible","showEmployee",this.showEmployeeDetails,this);
+                       this._bus.subscribe("incidence","onSaveIncidence",this.onSaveOdataIncidence,this);
 
         },
         showEmployeeDetails: function(category,nameEvent,path){
 
             var detailView = this.getView().byId("detailEmployeeView");
-            detailView.bindElement("jsonEmployees>" + path);
+            detailView.bindElement("odataNorthwind>" + path);
             this.getView().getModel("jsonLayout").setProperty("/ActiveKey","TwoColumnsMidExpanded");
 
             var incidenceModel = new sap.ui.model.json.JSONModel([]);
             detailView.setModel(incidenceModel,"incidenceModel");
             detailView.byId("tableIncidence").removeAllContent();
             
+        },
+
+        onSaveOdataIncidence: function(channelID,eventID,data){
+
+            var oresourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            var employeeID = this._detailEmployeeView.getBindingContext("odataNorthwind").getObject().EmployeeID;
+            var incidenceModel = this._detailEmployeeView.getModel("incidenceModel").getData();
+
+            if (typeof incidenceModel[data.incidenceRow].IncidenceID == 'undefined' ) {
+                
+          
+            var body = {
+                SapId: this.getOwnerComponent().SapId,
+                EmployeeId: employeeID.toString(),
+                CreationDate:incidenceModel[data.incidenceRow].CreationDate,
+                Type:incidenceModel[data.incidenceRow].Type,
+                Reason: incidenceModel[data.incidenceRow].Reason
+            };
+
+            this.getView().getModel("incidenceModel").create( "/IncidentsSet",body,{
+
+                success: function(){
+                        sap.m.MessageToast.show(oresourceBundle.getText("odataSaveOK"));
+                }.bind(this),
+                error: function(e){
+                    sap.m.MessageToast.show(oresourceBundle.getText("odataSaveKO"));
+                }.bind(this)
+            });
+
+        }else{
+            sap.m.MessageToast.show(oresourceBundle.getText("odataNoChanges"));  
+        }
+        
         }
 
     });

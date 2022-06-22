@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
     <Dialog id="_IDGenDialog1" title="{i18n>orders}">
-        <Table id="_IDGenTable1" items="{jsonEmployees>Orders}" width="700px">
+        <Table id="_IDGenTable1" items="{odataNorthwind>Orders}" width="700px">
             <columns>
                 <Column id="_IDGenColumn1" >
                     <header>
@@ -21,9 +21,9 @@
             <items>
                 <ColumnListItem id="_IDGenColumnListItem1" >
                     <cells>
-                        <Label id="_IDGenLabel4" text="{jsonEmployees>OrderID}"/>
-                        <Label id="_IDGenLabel5" text="{jsonEmployees>Freight}"/>
-                        <Label id="_IDGenLabel6" text="{jsonEmployees>ShipAddress}"/>
+                        <Label id="_IDGenLabel4" text="{odataNorthwind>OrderID}"/>
+                        <Label id="_IDGenLabel5" text="{odataNorthwind>Freight}"/>
+                        <Label id="_IDGenLabel6" text="{odataNorthwind>ShipAddress}"/>
                     </cells>
                 </ColumnListItem>
             </items>

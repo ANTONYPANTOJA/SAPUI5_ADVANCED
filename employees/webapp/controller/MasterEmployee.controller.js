@@ -180,7 +180,7 @@ sap.ui.define([
             //Obtener el controlado de la fila seleccionado
             var iconPressed = oEvent.getSource();
             //Obtener el contexto del modelo
-            var oContext = iconPressed.getBindingContext("jsonEmployees");
+            var oContext = iconPressed.getBindingContext("odataNorthwind");
 
             if (!this._oDialogOrders) {
                 this._oDialogOrders = sap.ui.xmlfragment("logaligroup.employees.fragment.DialogOrders",this);
@@ -188,7 +188,7 @@ sap.ui.define([
             }
 
             //Realizar el Bindig hacia el dialog table
-            this._oDialogOrders.bindElement("jsonEmployees>" + oContext.getPath());
+            this._oDialogOrders.bindElement("odataNorthwind>" + oContext.getPath());
             this._oDialogOrders.open();
         }
 
@@ -197,7 +197,7 @@ sap.ui.define([
         }
 
         function showEmployee(oEvent){
-            var path = oEvent.getSource().getBindingContext("jsonEmployees").getPath();
+            var path = oEvent.getSource().getBindingContext("odataNorthwind").getPath();
             this._bus.publish("flexible","showEmployee",path);
         }
 

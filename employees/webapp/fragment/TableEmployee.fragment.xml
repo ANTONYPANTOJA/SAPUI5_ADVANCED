@@ -3,7 +3,7 @@
                             <Button id="btnShowCity" text="{i18n>showCity}" visible="{jsonModelConfig>/visibleBtnShowCity}" press="onShowCity" />
                             <Button id="btnHideCity" text="{i18n>hideCity}" visible="{jsonModelConfig>/visibleBtnHideCity}" press="onHideCity" />
 
-                                <Table id="_IDGenTable1" items="{jsonEmployees>/}" >
+                                <Table id="_IDGenTable1" items="{odataNorthwind>/Employees}" >
                                     <columns>
                                         <Column id="_IDGenColumn1" visible="{jsonModelConfig>/visibleId}">
                                             <header>
@@ -33,10 +33,10 @@
                                     </columns>
                                     <ColumnListItem id="_IDGenColumnListItem1" type="Navigation" press="showEmployee">
                                             <cells>
-                                                <Label id="_IDGenLabel5" text="{jsonEmployees>EmployeeID}" />
-                                                <Label id="_IDGenLabel6" text="{jsonEmployees>LastName},{jsonEmployees>FirstName}" />
-                                                <Label id="_IDGenLabel7" text="{jsonEmployees>Country}" />
-                                                <Label id="_IDGenLabel8" text="{jsonEmployees>City}" />
+                                                <Label id="_IDGenLabel5" text="{odataNorthwind>EmployeeID}" />
+                                                <Label id="_IDGenLabel6" text="{odataNorthwind>LastName},{odataNorthwind>FirstName}" />
+                                                <Label id="_IDGenLabel7" text="{odataNorthwind>Country}" />
+                                                <Label id="_IDGenLabel8" text="{odataNorthwind>City}" />
                                                 <core:Icon id="_IDGenIcon1" src="sap-icon://show" press="showOrders2"></core:Icon>
                                             </cells>
                                     </ColumnListItem>
