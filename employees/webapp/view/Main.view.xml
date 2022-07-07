@@ -4,10 +4,6 @@
           displayBlock="true"
           xmlns="sap.m"
           xmlns:f="sap.f">
-
-<Shell id="shell">
-        <App id="app">
-            <pages>
                 <Page id="_IDGenPage1" showHeader="false">
                     <content>
                         <f:FlexibleColumnLayout id="fcl" backgroundDesign="Solid" layout="{jsonLayout>/ActiveKey}">
@@ -37,7 +33,5 @@
                         </Toolbar>
                     </footer>
                 </Page>
-            </pages>
-        </App>
-</Shell>
+    
 </mvc:View>  

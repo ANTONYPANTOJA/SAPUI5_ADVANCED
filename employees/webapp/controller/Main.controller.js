@@ -9,13 +9,17 @@ sap.ui.define([
 
     return Controller.extend("logaligroup.sapui5.controller.app", {
 
-        onbeforeRendering: function(){
+        onBeforeRendering: function(){
 
            // this._detailEmployeeView = this.getView().byId("detailEmployeeView");
+           
+           this._detailEmployeeView = this.getView().byId("detailEmployeeView");
         },
 
         onInit: function () {
-            this._detailEmployeeView = this.getView().byId("detailEmployeeView");
+           
+         // this._detailEmployeeView = this.getView().byId("detailEmployeeView");
+
             var oview        = this.getView();
             //         var i18nBundle   = oview.getModel("i18n").getResourceBundle(); 
            
@@ -71,8 +75,9 @@ sap.ui.define([
         },
         showEmployeeDetails: function(category,nameEvent,path){
 
-            var detailView = this.getView().byId("detailEmployeeView");
+            var detailView = this.getView().byId("detailEmployeeView"); 
             detailView.bindElement("odataNorthwind>" + path);
+
             this.getView().getModel("jsonLayout").setProperty("/ActiveKey","TwoColumnsMidExpanded");
 
             var incidenceModel = new sap.ui.model.json.JSONModel([]);
@@ -80,7 +85,6 @@ sap.ui.define([
             detailView.byId("tableIncidence").removeAllContent();
 
             this.onReadOdataIncidence(this._detailEmployeeView.getBindingContext("odataNorthwind").getObject().EmployeeID);
-            
         },
 
         onSaveOdataIncidence: function(channelID,eventID,data){

@@ -70,8 +70,6 @@ sap.ui.define([
         function onInit(){
 
             this._bus = sap.ui.getCore().getEventBus();
-
-            
         }
 
         function onShowCity(){
@@ -201,18 +199,27 @@ sap.ui.define([
             this._bus.publish("flexible","showEmployee",path);
         }
 
+        function toOrderDetails(oEvent){
+
+            var orderID = oEvent.getSource().getBindingContext("odataNorthwind").getObject().OrderID;
+            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            oRouter.navTo("RouteOrderDetails",{
+                    OrderID: orderID
+            });
+        }
+
 //Otra forma de devolver el CONTROLLER.extend ( Esto corrige los errores de Typescript)
     
         var Main = Controller.extend("logaligroup.employees.controller.MasterEmployee",{});
-        Main.prototype.onValidate = function(){
+        Main.prototype.onValidate = function () {
 
             var objectEmployee = this.byId("Input_01");
             var valueEmployee = objectEmployee.getValue();
-            if( valueEmployee.length === 6 ){
+            if (valueEmployee.length === 6) {
                 objectEmployee.setDescription("OK");
                 this.byId("slCountry").setVisible(true);
                 this.byId("labelCountry").setVisible(true);
-            }else{
+            } else {
                 objectEmployee.setDescription("Not OK");
                 this.byId("slCountry").setVisible(false);
                 this.byId("labelCountry").setVisible(false);
@@ -228,6 +235,7 @@ sap.ui.define([
         Main.prototype.onHideCity = onHideCity;
         Main.prototype.onCloseOrders = onCloseOrders; 
         Main.prototype.showEmployee = showEmployee; 
+        Main.prototype.toOrderDetails = toOrderDetails;
         return Main;
 
     });
