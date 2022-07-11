@@ -4,7 +4,8 @@
           displayBlock="true"
           xmlns="sap.m"
           xmlns:l="sap.ui.layout"
-          xmlns:f="sap.ui.layout.form">
+          xmlns:f="sap.ui.layout.form"
+          xmlns:sc="logaligroup.employees.control">
     <Page >
     <customHeader>
         <Bar>
@@ -53,7 +54,14 @@
                         </f:FormContainer>
                     </f:formContainers>
                 </f:Form>
+                <FlexBox class="sapUiTinyMarginTop">
+                    <sc:Signature id="signature"></sc:Signature>
+                    <Button text="{i18n>clear}" press="onClearSignature" class="sapUiTinyMarginBegin"></Button>
+                </FlexBox>
             </l:Grid>
+        </Panel>
+        <Panel headerText="{i18n>orderProducts}">
+        <!--    <List items="{path:'odataNorthwind>Order_Details', parameters:{expand : Product }, factory: 'factoryOrderDetails'}" />-->
         </Panel>
     </content>
     </Page>

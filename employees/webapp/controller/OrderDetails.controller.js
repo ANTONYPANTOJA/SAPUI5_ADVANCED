@@ -30,6 +30,41 @@ sap.ui.define([
                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 oRouter.navTo("RouteMain", true);
             }
+        },
+
+        onClearSignature: function(oEvent){
+            var signature =  this.byId("signature");
+            signature.clear();
+        },
+
+        factoryOrderDetails: function( listID, oContext){
+
+            var contextObject = oContext.getObject();
+            contextObject.Currency = "EUR";
+
+            var unitsInStock = oContext.getModel().getProperty("/Products(" + contextObject.ProductID + ")/UnitsInStock");
+
+            if( contextObject.Quantity <= unitsInStock ){
+                var objectListItem =  new sap.m.ObjectListItem({
+                    title: "{odataNorthwind>/Products(" + contextObject.ProductID + ")/ProductName} ({odataNorthwind>Quantity})",
+                    number:"{parts: [ {path: 'odataNorthwind>UnitPrice'}, {path: 'odataNorthwind>Currency'}], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false }}",
+                    numberUnit:"{odataNorthwind>Currency}"
+
+                });
+                return objectListItem;
+            }else{
+                
+                var customListItem = new sap.m.CustomListItem({
+                    content: [
+                        new sap.m.Bar({
+                            contentLeft: new sap.m.Label({ text: "{odataNorthwind>/Products(" + contextObject.ProductID + ")/ProductName} ({odataNorthwind>Quantity})"}),
+                            contentMiddle: new sap.m.ObjectStatus({ text: "{i18n>availableStock} {odataNorthwind>/Products(" + contextObject.ProductID + ")/UnitsInStock}" , state:"Error" }),
+                            contentRight: new sap.m.Label({ text: "parts: [ {path: 'odataNorthwind>UnitPrice'}, {path: 'odataNorthwind>Currency'}], type: 'sap.ui.model.type.Currency'}"})
+                        })
+                    ]
+                });
+                return customListItem;
+            }
         }
 
     });

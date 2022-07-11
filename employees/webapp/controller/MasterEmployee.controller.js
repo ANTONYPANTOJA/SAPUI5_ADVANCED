@@ -1,7 +1,8 @@
 // @ts-ignore
 // @ts-nocheck
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+   // "sap/ui/core/mvc/Controller",
+    "logaligroup/employees/controller/Base.controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "/sap/m/MessageToast"
@@ -9,7 +10,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller,Filter,FilterOperator,MessageToast) {
+    function (Base,Filter,FilterOperator,MessageToast) {
         "use strict";
 /*
         return Controller.extend("logaligroup.employees.controller.MainView", {
@@ -198,7 +199,7 @@ sap.ui.define([
             var path = oEvent.getSource().getBindingContext("odataNorthwind").getPath();
             this._bus.publish("flexible","showEmployee",path);
         }
-
+/** Se usara el controlador Base.controller.js
         function toOrderDetails(oEvent){
 
             var orderID = oEvent.getSource().getBindingContext("odataNorthwind").getObject().OrderID;
@@ -207,10 +208,11 @@ sap.ui.define([
                     OrderID: orderID
             });
         }
+*/
 
 //Otra forma de devolver el CONTROLLER.extend ( Esto corrige los errores de Typescript)
     
-        var Main = Controller.extend("logaligroup.employees.controller.MasterEmployee",{});
+        var Main = Base.extend("logaligroup.employees.controller.MasterEmployee",{});
         Main.prototype.onValidate = function () {
 
             var objectEmployee = this.byId("Input_01");
@@ -235,7 +237,7 @@ sap.ui.define([
         Main.prototype.onHideCity = onHideCity;
         Main.prototype.onCloseOrders = onCloseOrders; 
         Main.prototype.showEmployee = showEmployee; 
-        Main.prototype.toOrderDetails = toOrderDetails;
+      //  Main.prototype.toOrderDetails = toOrderDetails;
         return Main;
 
     });
