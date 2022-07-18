@@ -1,17 +1,48 @@
 // @ts-nocheck
 sap.ui.define([
     'sap/ui/core/mvc/Controller',
-    'sap/ui/core/routing/History'
+    'sap/ui/core/routing/History',
+    "/sap/m/MessageBox"
 
-], function(Controller,History) {
+], function(Controller,History,MessageBox) {
 
     function _onObjectMatched(oEvent){
+
+        this.onClearSignature();
+
         this.getView().bindElement({
 
             path: "/Orders(" + oEvent.getParameter("arguments").OrderID + ")",
-            model: "odataNorthwind"
+            model: "odataNorthwind",
+            events:{
+                    dataReceived: function(oData){
+                    _readSignature.bind(this)(oData.getParameter("data").OrderID,oData.getParameter("data").EmployeeID);          
+                    }.bind(this)
+            }
         });
+
+        const objContext = this.getView().getModel("odataNorthwind").getContext("/Orders("
+                           + oEvent.getParameter("arguments").OrderID + ")").getObject();
+        if (objContext){       
+        _readSignature.bind(this)(objContext.OrderID,objContext.EmployeeID);   
+        }    
     }
+    function _readSignature(OrderID,EmployeeID) {
+        this.getView().getModel("incidenceModel").read("/SignatureSet(OrderId='" + OrderID + "',SapId='"+ this.getOwnerComponent().SapId  +
+                                                        "',EmployeeId='"+ EmployeeID +"')",
+                {
+                    success: function(data){
+                        const signature = this.getView().byId("signature");
+                        if( data.MediaContent !== ""){
+                            signature.setSignature("data:image/png;base64," + data.MediaContent);
+                        }
+                    }.bind(this),
+                    error: function(data){
+
+                    }
+                });
+    }
+
     return Controller.extend("logaligroup.employees.controller.OrderDetails",{
 
         onInit: function(){
@@ -65,6 +96,47 @@ sap.ui.define([
                 });
                 return customListItem;
             }
+        },
+        onSaveSignature: function(oEvent){
+
+            const signature = this.byId("signature");
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            let signaturePng;
+
+            if(!signature.isFill()){
+                MessageBox.error(oResourceBundle.getText("fillSignature"));
+            } else{
+                signaturePng = signature.getSignature().replace("data:image/png;base64,","");
+                let objectOrder = oEvent.getSource().getBindingContext("odataNorthwind").getObject();
+
+                let body = {
+                        OrderId: objectOrder.OrderID.toString(),
+                        SapId: this.getOwnerComponent().SapId,
+                        EmployeeId: objectOrder.EmployeeID.toString(),
+                        MimeType: "image/png",
+                        MediaContent: signaturePng
+
+                };
+
+                this.getView().getModel("incidenceModel").create("/SignatureSet",body,{
+                    success: function(){
+                        MessageBox.information(oResourceBundle.getText("signatureSaved"));
+                    },
+                    error: function(){
+                        MessageBox.error(oResourceBundle.getText("signatureNotSaved"));
+                    }
+                });
+            }
+        },
+        onFileBeforeUpload: function(oEvent){
+            let fileName = oEvent.getParameter("filename");
+            let objContext = oEvent.getSource().getBindingContext("odataNorthwind").getObject();
+            let oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+                name: "slug",
+                value: objContext.OrderID + ";" +  this.getOwnerComponent().SapId + ";" + objContext.EmployeeID + ";" +
+                       fileName
+            });
+            oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
         }
 
     });
