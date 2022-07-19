@@ -1,10 +1,14 @@
+// @ts-ignore
+
 // @ts-nocheck
 sap.ui.define([
     'sap/ui/core/mvc/Controller',
     'sap/ui/core/routing/History',
-    "/sap/m/MessageBox"
+    "/sap/m/MessageBox",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
 
-], function(Controller,History,MessageBox) {
+], function(Controller,History,MessageBox,Filter,FilterOperator) {
 
     function _onObjectMatched(oEvent){
 
@@ -28,6 +32,8 @@ sap.ui.define([
         }    
     }
     function _readSignature(OrderID,EmployeeID) {
+
+        //Read Signature Image
         this.getView().getModel("incidenceModel").read("/SignatureSet(OrderId='" + OrderID + "',SapId='"+ this.getOwnerComponent().SapId  +
                                                         "',EmployeeId='"+ EmployeeID +"')",
                 {
@@ -37,10 +43,27 @@ sap.ui.define([
                             signature.setSignature("data:image/png;base64," + data.MediaContent);
                         }
                     }.bind(this),
+                    // @ts-ignore
                     error: function(data){
 
                     }
                 });
+
+        //Bind Files
+        this.byId("uploadCollection").bindAggregation("items",{
+            path:"incidenceModel>/FilesSet",
+   
+            filters:[   new Filter("OrderId",FilterOperator.EQ,OrderID),
+                        new Filter("SapId",FilterOperator.EQ,this.getOwnerComponent().SapId),
+                        new Filter("EmployeeId",FilterOperator.EQ,EmployeeID),
+
+            ],
+            template: new sap.m.UploadCollectionItem({
+                documentId: "{incidenceModel>attId}",
+                visibleEdit: false,
+                fileName:"{incidenceModel>FileName}"
+            }).attachPress(this.downloadFile)
+        });   
     }
 
     return Controller.extend("logaligroup.employees.controller.OrderDetails",{
@@ -50,6 +73,7 @@ sap.ui.define([
             oRouter.getRoute("RouteOrderDetails").attachPatternMatched(_onObjectMatched,this);
         },
         
+        // @ts-ignore
         onBack: function(oEvent){
 
             var oHistory = History.getInstance();
@@ -59,15 +83,18 @@ sap.ui.define([
                 window.history.go(-1);
             } else {
                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                // @ts-ignore
                 oRouter.navTo("RouteMain", true);
             }
         },
 
+        // @ts-ignore
         onClearSignature: function(oEvent){
             var signature =  this.byId("signature");
             signature.clear();
         },
 
+        // @ts-ignore
         factoryOrderDetails: function( listID, oContext){
 
             var contextObject = oContext.getObject();
@@ -129,7 +156,7 @@ sap.ui.define([
             }
         },
         onFileBeforeUpload: function(oEvent){
-            let fileName = oEvent.getParameter("filename");
+            let fileName = oEvent.getParameter("fileName");
             let objContext = oEvent.getSource().getBindingContext("odataNorthwind").getObject();
             let oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
                 name: "slug",
@@ -137,6 +164,36 @@ sap.ui.define([
                        fileName
             });
             oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+        },
+        onFileChange: function(oEvent){
+            let oUplodCollection =  oEvent.getSource();
+
+            //Header Toke CSRRF - CROSS-SITE REQUEST FORGERY
+
+            let oCustomerHeaderToken =  new sap.m.UploadCollectionParameter({
+                    name:  "x-csrf-token",
+                    value: this.getView().getModel("incidenceModel").getSecurityToken()
+            });
+            oUplodCollection.addHeaderParameter(oCustomerHeaderToken);
+        },
+        onFileUploadComplete: function(oEvent){
+            oEvent.getSource().getBinding("items").refresh();
+        },
+        onFileDeleted: function(oEvent){
+            var oUplodCollection = oEvent.getSource();
+            var Spath = oEvent.getParameter("item").getBindingContext("incidenceModel").getPath();
+            this.getView().getModel("incidenceModel").remove(Spath,{
+                success: function(){
+                    oUplodCollection.getBinding("items").refresh();
+                },
+                error: function(){
+
+                }
+            });
+        },
+        downloadFile: function(oEvent){
+            const sPath = oEvent.getSource().getBindingContext("incidenceModel").getPath();
+            window.open("/sap/opu/odata/sap/YSAPUI5_SRV_01" + Spath + "/$value");
         }
 
     });
